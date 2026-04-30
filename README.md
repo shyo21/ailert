@@ -1,5 +1,7 @@
 # ailert
 
+**English** | [한국어](./README.ko.md)
+
 A Cloudflare Worker that relays AI service status page updates to Discord.
 
 It supports two delivery modes:
