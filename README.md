@@ -89,8 +89,8 @@ Receive Oracle Cloud Infrastructure Monitoring alarms in Discord.
 ### One-time setup
 
 1. Generate a webhook secret: `openssl rand -hex 32`. Save the value.
-2. Register the secret with the worker: `wrangler secret put OCI_WEBHOOK_SECRET` (paste the value at the prompt).
-3. Register the Discord webhook URL: `wrangler secret put DISCORD_WEBHOOK_OCI`.
+2. Register the secret with the worker: `npx wrangler secret put OCI_WEBHOOK_SECRET` (paste the value at the prompt).
+3. Register the Discord webhook URL: `npx wrangler secret put DISCORD_WEBHOOK_OCI`.
 4. Deploy: `npm run deploy`.
 
 ### Per-alarm setup (OCI side)

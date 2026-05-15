@@ -89,8 +89,8 @@ Oracle Cloud Infrastructure Monitoring 알람을 Discord로 받습니다.
 ### 일회성 설정
 
 1. webhook 시크릿 생성: `openssl rand -hex 32`. 값을 기록해 둡니다.
-2. 시크릿을 워커에 등록: `wrangler secret put OCI_WEBHOOK_SECRET` (프롬프트에 값 붙여넣기).
-3. Discord webhook URL 등록: `wrangler secret put DISCORD_WEBHOOK_OCI`.
+2. 시크릿을 워커에 등록: `npx wrangler secret put OCI_WEBHOOK_SECRET` (프롬프트에 값 붙여넣기).
+3. Discord webhook URL 등록: `npx wrangler secret put DISCORD_WEBHOOK_OCI`.
 4. 배포: `npm run deploy`.
 
 ### 알람별 설정 (OCI 측)
