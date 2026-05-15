@@ -23,7 +23,7 @@ export const POLLING_TARGETS = [
   },
 ];
 
-const COLORS = {
+export const COLORS = {
   critical: 0xe04343,
   major: 0xe86235,
   minor: 0xfaa72a,
