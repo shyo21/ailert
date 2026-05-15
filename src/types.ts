@@ -122,4 +122,46 @@ export interface Env {
   DISCORD_WEBHOOK_CLAUDE: string;
   DISCORD_WEBHOOK_GITHUB: string;
   DISCORD_WEBHOOK_OPENAI: string;
+  DISCORD_WEBHOOK_OCI: string;
+  OCI_WEBHOOK_SECRET: string;
+}
+
+// ----- OCI Notifications -----
+
+export type OciSeverity = "CRITICAL" | "ERROR" | "WARNING" | "INFO";
+
+export type OciAlarmType =
+  | "OK_TO_FIRING"
+  | "FIRING_TO_OK"
+  | "REPEAT"
+  | "RESET"
+  | "RESEND";
+
+export interface OciAlarmMetadata {
+  id: string;
+  status: "FIRING" | "OK" | "SUSPENDED";
+  severity: OciSeverity;
+  namespace: string;
+  query: string;
+  totalMetricsFiring: number;
+  dimensions?: Array<Record<string, string>>;
+  alarmUrl: string;
+}
+
+export interface OciNotificationPayload {
+  dedupeKey: string;
+  title: string;
+  body: string;
+  type: OciAlarmType;
+  severity: OciSeverity;
+  timestampEpochMillis: number;
+  alarmMetaData: OciAlarmMetadata[];
+  version?: number;
+}
+
+export interface OciSubscriptionConfirmationPayload {
+  ConfirmationURL?: string;
+  confirmationURL?: string;
+  MessageType?: string;
+  TopicId?: string;
 }
