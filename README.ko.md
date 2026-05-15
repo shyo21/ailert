@@ -82,6 +82,27 @@ src/
     └── status-poller.ts      # KV 상태 기반 Statuspage API 폴러
 ```
 
+## OCI Notifications (Oracle Cloud)
+
+Oracle Cloud Infrastructure Monitoring 알람을 Discord로 받습니다.
+
+### 일회성 설정
+
+1. webhook 시크릿 생성: `openssl rand -hex 32`. 값을 기록해 둡니다.
+2. 시크릿을 워커에 등록: `wrangler secret put OCI_WEBHOOK_SECRET` (프롬프트에 값 붙여넣기).
+3. Discord webhook URL 등록: `wrangler secret put DISCORD_WEBHOOK_OCI`.
+4. 배포: `npm run deploy`.
+
+### 알람별 설정 (OCI 측)
+
+1. OCI Notifications에서 **Topic**을 생성하거나 기존 Topic을 재사용합니다.
+2. 해당 Topic에 **HTTPS Subscription**을 추가합니다. URL:
+   `https://ailert.<cf-계정>.workers.dev/oci/<OCI_WEBHOOK_SECRET>`
+   워커가 자동 confirm 하므로 몇 초 안에 `ACTIVE` 상태가 됩니다.
+3. Monitoring **Alarm**을 만들고 destination을 위 Topic으로 지정합니다.
+
+이 엔드포인트로 들어오는 모든 알람은 하나의 Discord 채널(`DISCORD_WEBHOOK_OCI`)로 전달됩니다.
+
 ## 라이선스
 
 별도 명시된 라이선스가 없으며 기본적으로 모든 권리는 작성자에게 있습니다. OSS 라이선스 추가가 필요하시면 issue 를 열어 주세요.
