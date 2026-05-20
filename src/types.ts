@@ -124,6 +124,12 @@ export interface Env {
   DISCORD_WEBHOOK_OPENAI: string;
   DISCORD_WEBHOOK_OCI: string;
   OCI_WEBHOOK_SECRET: string;
+  // OCI Usage API egress polling
+  OCI_TENANCY_OCID: string;
+  OCI_USER_OCID: string;
+  OCI_KEY_FINGERPRINT: string;
+  OCI_PRIVATE_KEY_PEM: string;
+  OCI_REGION: string;
 }
 
 // ----- OCI Notifications -----

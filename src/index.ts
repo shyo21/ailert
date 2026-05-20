@@ -3,8 +3,11 @@ import { sendDiscordWebhook } from "./discord";
 import { formatComponentUpdate } from "./formatters/component";
 import { formatIncident } from "./formatters/incident";
 import { handleOci } from "./oci";
+import { pollOciEgress } from "./polling/oci-usage";
 import { pollTarget } from "./polling/status-poller";
 import type { Env, StatuspageWebhookPayload, WebhookEnvKey } from "./types";
+
+const EGRESS_CRON = "0 12 * * *";
 
 async function handleStatuspage(request: Request, env: Env): Promise<Response> {
   let payload: StatuspageWebhookPayload;
@@ -54,7 +57,12 @@ async function handleStatuspage(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    if (controller.cron === EGRESS_CRON) {
+      ctx.waitUntil(pollOciEgress(env));
+      return;
+    }
+    // Default: STATUSPAGE_POLL_CRON ("*/2 * * * *") — Statuspage polling.
     const tasks = POLLING_TARGETS.map((target) => pollTarget(target, env));
     ctx.waitUntil(Promise.allSettled(tasks));
   },
