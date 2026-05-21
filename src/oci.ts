@@ -64,17 +64,34 @@ export function formatOciAlarm(payload: OciNotificationPayload): DiscordWebhookB
 }
 
 /**
+ * Constant-time comparison via SHA-256 + crypto.subtle.timingSafeEqual.
+ *
+ * Hashes both inputs to a fixed 32-byte digest so neither the length
+ * nor any prefix of `expected` can be inferred from response timing.
+ * Cloudflare guidance: developers.cloudflare.com/workers/best-practices/workers-best-practices/
+ */
+async function verifyToken(provided: string, expected: string): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const [a, b] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(provided)),
+    crypto.subtle.digest("SHA-256", encoder.encode(expected)),
+  ]);
+  return crypto.subtle.timingSafeEqual(a, b);
+}
+
+/**
  * Handle a POST request to /oci/:token.
  *
- * Authenticates by comparing the URL path token to env.OCI_WEBHOOK_SECRET,
- * then dispatches based on the OCI Notifications message type.
+ * Authenticates by comparing the URL path token to env.OCI_WEBHOOK_SECRET
+ * in constant time (verifyToken), then dispatches based on the OCI
+ * Notifications message type.
  */
 export async function handleOci(
   request: Request,
   env: Env,
   token: string,
 ): Promise<Response> {
-  if (token !== env.OCI_WEBHOOK_SECRET) {
+  if (!(await verifyToken(token, env.OCI_WEBHOOK_SECRET))) {
     return new Response("Unauthorized", { status: 401 });
   }
 
