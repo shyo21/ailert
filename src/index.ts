@@ -1,3 +1,4 @@
+import { verifyToken } from "./auth";
 import { PAGE_CONFIG, POLLING_TARGETS } from "./config";
 import { sendDiscordWebhook } from "./discord";
 import { formatComponentUpdate } from "./formatters/component";
@@ -74,7 +75,11 @@ export default {
 
     const path = new URL(request.url).pathname;
 
-    if (path === "/" || path === "") {
+    const spMatch = path.match(/^\/sp\/([^/]+)$/);
+    if (spMatch) {
+      if (!(await verifyToken(spMatch[1], env.STATUSPAGE_WEBHOOK_SECRET))) {
+        return new Response("Unauthorized", { status: 401 });
+      }
       return handleStatuspage(request, env);
     }
 
